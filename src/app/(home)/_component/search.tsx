@@ -1,7 +1,7 @@
 "use client"
 import { SearchIcon } from "lucide-react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../../_components/ui/button";
+import { Input } from "../../_components/ui/input";
 const Search = () => {
     return (  <div className="flex items-center gap-2">
         <Input placeholder="Busque por uma barbearia..."/>
