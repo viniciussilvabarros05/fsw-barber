@@ -1,4 +1,6 @@
+"use client"
 import { db } from "@/app/_lib/prisma";
+import { useRouter } from "next/navigation";
 import BarberShopInfo from "./_components/barbershop-info";
 import ServiceItem from "./_components/service-item";
 
@@ -9,7 +11,9 @@ interface BarbershopDetailsPageProps {
 const BarbershopDetailsPage = async ({
   params,
 }: BarbershopDetailsPageProps) => {
+  const route = useRouter()
   if (!params.id) {
+    route.push("/")
     return null;
   }
   const barbershop = await db.barbershop.findUnique({
