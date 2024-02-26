@@ -1,4 +1,4 @@
-import Header from "./_component/header";
+import Header from "../_components/header";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Search from "./_component/search";
