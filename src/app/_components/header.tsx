@@ -17,7 +17,7 @@ import { Avatar, AvatarImage } from "./ui/avatar";
 const Header = () => {
   const { data } = useSession();
   const handleLoginClick = async () => {
-    await signIn();
+    await signIn("google");
   };
   const handleLogoutClick = () => {
      return signOut();
@@ -57,9 +57,9 @@ const Header = () => {
                   <UserIcon size={32} className=" border-solid border-[2px] rounded-[50rem] border-white"/>
                   <h2 className="font-bold">Olá, faça seu login!</h2>
                 </div>
-                <Button onClick={handleLoginClick} variant="secondary" className="w-full">
-                  <LogInIcon className="mr-2 " size={18}/>
-                  Fazer Login
+                <Button onClick={handleLoginClick} variant="secondary" className="w-full flex gap-4">
+                  <Image src="/google.png" width={24} height={24} alt="google-icon"/>
+                  Fazer Login com Google
                 </Button>
               </div>
             )}
