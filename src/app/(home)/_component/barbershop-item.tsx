@@ -52,6 +52,8 @@ const BarbershopItem = ({ barbershop }: BarbeshopItemProps) => {
           </Button>
         </div>
       </CardContent>
+
+      
     </Card>
   );
 };
