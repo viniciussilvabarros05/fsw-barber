@@ -17,6 +17,7 @@ import { Loader2 } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { saveBooking } from "../_actions/save-booking";
 import { generateDayTimeList } from "../_helpers/hours";
 
@@ -31,10 +32,11 @@ const ServiceItem = ({
   isAuthenticated,
   barbershop,
 }: ServiceItemProps) => {
-  const {data} = useSession()
-  const [date, setDate] = useState<Date>(new Date());
+  const { data } = useSession();
+  const [date, setDate] = useState<Date| undefined>(new Date());
   const [hour, setHour] = useState<string | undefined>();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [sheetIsOpen, setSheetIsOpen] = useState(false);
 
   const handleBookingClick = () => {
     if (!isAuthenticated) {
@@ -59,7 +61,7 @@ const ServiceItem = ({
   };
 
   const handleBookingSubmit = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       if (!hour || !date || !data?.user) {
         return;
@@ -71,12 +73,25 @@ const ServiceItem = ({
         serviceId: service.id,
         barbershopId: barbershop.id,
         date: newDate,
-        userId:(data?.user as any).id,
+        userId: (data?.user as any).id,
+      });
+
+      setHour(undefined);
+      setDate(undefined);
+      setSheetIsOpen(false);
+      toast("Reserva realizada com sucesso!", {
+        description: format(newDate, "'Para' dd 'de' MMMM 'às' HH':'mm'.'", {
+          locale: ptBR,
+        }),
+        action: {
+          label: "Visualizar",
+          onClick: () => {},
+        },
       });
     } catch (error) {
       console.error(error);
-    }finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -106,7 +121,7 @@ const ServiceItem = ({
                 }).format(Number(service.price))}
               </p>
 
-              <Sheet>
+              <Sheet open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
                 <SheetTrigger asChild>
                   <Button variant="secondary" onClick={handleBookingClick}>
                     Reservar
@@ -199,8 +214,13 @@ const ServiceItem = ({
                     </Card>
                   </div>
                   <SheetFooter className="px-5">
-                    <Button disabled={!(date && hour) || (isLoading)} onClick={handleBookingSubmit}>
-                      {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                    <Button
+                      disabled={!(date && hour) || isLoading}
+                      onClick={handleBookingSubmit}
+                    >
+                      {isLoading && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
                       Confirmar reserva
                     </Button>
                   </SheetFooter>
