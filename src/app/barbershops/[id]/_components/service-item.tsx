@@ -11,11 +11,13 @@ import {
   SheetTrigger,
 } from "@/app/_components/ui/sheet";
 import { Barbershop, Service } from "@prisma/client";
-import { format } from "date-fns";
+import { format, setHours, setMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { signIn } from "next-auth/react";
+import { Loader2 } from "lucide-react";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { saveBooking } from "../_actions/save-booking";
 import { generateDayTimeList } from "../_helpers/hours";
 
 interface ServiceItemProps {
@@ -29,8 +31,11 @@ const ServiceItem = ({
   isAuthenticated,
   barbershop,
 }: ServiceItemProps) => {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const {data} = useSession()
+  const [date, setDate] = useState<Date>(new Date());
   const [hour, setHour] = useState<string | undefined>();
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleBookingClick = () => {
     if (!isAuthenticated) {
       return signIn("google");
@@ -38,7 +43,10 @@ const ServiceItem = ({
   };
 
   const handleDateClick = (date: Date | undefined) => {
-    setDate(date);
+    if (date) {
+      setDate(date);
+    }
+
     setHour(undefined);
   };
 
@@ -50,6 +58,27 @@ const ServiceItem = ({
     setHour(time);
   };
 
+  const handleBookingSubmit = async () => {
+    setIsLoading(true)
+    try {
+      if (!hour || !date || !data?.user) {
+        return;
+      }
+      const dateHour = Number(hour.split(":")[0]);
+      const dateMinutes = Number(hour.split(":")[0]);
+      const newDate = setMinutes(setHours(date, dateHour), dateMinutes);
+      await saveBooking({
+        serviceId: service.id,
+        barbershopId: barbershop.id,
+        date: newDate,
+        userId:(data?.user as any).id,
+      });
+    } catch (error) {
+      console.error(error);
+    }finally{
+      setIsLoading(false)
+    }
+  };
   return (
     <Card>
       <CardContent className="p-3">
@@ -170,7 +199,10 @@ const ServiceItem = ({
                     </Card>
                   </div>
                   <SheetFooter className="px-5">
-                    <Button disabled={!(date && hour)}>Confirmar reserva</Button>
+                    <Button disabled={!(date && hour) || (isLoading)} onClick={handleBookingSubmit}>
+                      {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                      Confirmar reserva
+                    </Button>
                   </SheetFooter>
                 </SheetContent>
               </Sheet>
