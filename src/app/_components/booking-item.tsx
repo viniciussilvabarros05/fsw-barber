@@ -1,13 +1,22 @@
+"use client";
 import { Prisma } from "@prisma/client";
 import { format, isFuture } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Loader2 } from "lucide-react";
+import { revalidatePath } from "next/cache";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { cancelBookking } from "../_actions/cancel-booking";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -24,8 +33,25 @@ interface BookingItemProps {
 
 const BookingItem = ({ booking }: BookingItemProps) => {
   const isBookingConfirmed = isFuture(booking.date);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  const handleCancelClick = async () => {
+    setIsDeleteLoading(true);
+    try {
+      await cancelBookking(booking.id);
+
+      toast.success("Reserva cancelada com sucesso!");
+    } catch (error) {
+        console.error(error);
+    } finally {
+        setIsDeleteLoading(true);
+        setIsBookingOpen(false)
+    }
+  };
+
   return (
-    <Sheet>
+    <Sheet open={isBookingOpen} onOpenChange={setIsBookingOpen}>
       <SheetTrigger>
         <Card className="min-w-full">
           <CardContent className="p-5 py-0 flex flex-row justify-between flex-[0.8]">
@@ -56,7 +82,7 @@ const BookingItem = ({ booking }: BookingItemProps) => {
         </Card>
       </SheetTrigger>
 
-      <SheetContent className="px-0">
+      <SheetContent className="px-0" >
         <SheetHeader className="text-left pb-6 border-b border-solid border-secondary px-5">
           <SheetTitle>Informações da Reserva</SheetTitle>
         </SheetHeader>
@@ -85,12 +111,11 @@ const BookingItem = ({ booking }: BookingItemProps) => {
           </div>
         </div>
 
-
         <Badge
-            className="w-fit mx-5 my-2"
-            variant={isBookingConfirmed ? "default" : "secondary"}
+          className="w-fit mx-5 my-2"
+          variant={isBookingConfirmed ? "default" : "secondary"}
         >
-            {isBookingConfirmed ? "Confirmado" : "Finalizado"}
+          {isBookingConfirmed ? "Confirmado" : "Finalizado"}
         </Badge>
         <div className="py-6 px-5 bprder-1 border-solid border-secondary border-t ">
           <Card>
@@ -126,6 +151,28 @@ const BookingItem = ({ booking }: BookingItemProps) => {
             </CardContent>
           </Card>
         </div>
+        <SheetFooter className="flex-row gap-3 mt-3 px-5">
+          <SheetClose asChild>
+            <Button
+              className="w-full"
+              variant="secondary"
+            >
+              Voltar
+            </Button>
+          </SheetClose>
+
+          <Button
+            onClick={handleCancelClick}
+            disabled={!isBookingConfirmed || isDeleteLoading}
+            className="w-full"
+            variant="destructive"
+          >
+            {isDeleteLoading && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Cancelar Reserva
+          </Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
