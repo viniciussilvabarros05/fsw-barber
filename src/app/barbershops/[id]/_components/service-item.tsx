@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@/app/_components/ui/sheet";
 import { Barbershop, Booking, Service } from "@prisma/client";
-import { format, setHours, setMinutes } from "date-fns";
+import { format, isPast, setHours, setMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Loader2 } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
@@ -56,12 +56,17 @@ const ServiceItem = ({
 
         return bookingHour === timeHour && bookingMinutes === timeMinutes;
       });
-
-      if (!booking) {
+      const confirmPastTime = ()=> {
+        const day = new Date(date)
+        day.setHours(timeHour)
+        day.setMinutes(timeMinutes)
+        return isPast(day)
+      }
+      if (!booking && !confirmPastTime()) {
         return true;
       }
 
-      return false;
+      return false
     });
   }, [date, dayBookings]);
 
@@ -84,7 +89,6 @@ const ServiceItem = ({
 
   const handleDateClick = (date: Date | undefined) => {
     if (date) {
-      console.log(date)
       setDate(date);
     }
 
