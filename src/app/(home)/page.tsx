@@ -5,8 +5,29 @@ import Search from "./_component/search";
 import BookingItem from "../_components/booking-item";
 import { db } from "../_lib/prisma";
 import BarbershopItem from "./_component/barbershop-item";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import { Card } from "../_components/ui/card";
+
 export default async function Home() {
+  const session = await getServerSession(authOptions);
   const barbershops = await db.barbershop.findMany({});
+
+  const bookings = session?.user
+    ? await db.booking.findMany({
+        where: {
+          userId: (session?.user as any)?.id,
+          date:{
+            gte: new Date()
+          }
+        },
+        include: {
+          service: true,
+          barbershop: true,
+        },
+      })
+    : [];
+
   return (
     <div>
       <Header />
@@ -19,12 +40,29 @@ export default async function Home() {
       <div className="mt-6 px-5">
         <Search />
       </div>
-      <div className="px-5 mt-6">
-        <h2 className="text-xs mb-3 uppercase text-gray-400 font-bold">
-          {" "}
-          Agendamentos
+      <div className="mt-6">
+        <h2 className="px-5 text-xs mb-3 uppercase text-gray-400 font-bold">
+          {session?.user  && 
+          "Agendamentos"
+          
+          }
+         
         </h2>
-        <BookingItem />
+
+        <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden pr-4">
+        {session?.user &&  bookings.length == 0 && (
+          <Card className="py-4 w-full mx-4">
+            <h2 className="text-gray-400 text-center">
+              Você não possui agendamentos
+            </h2>
+          </Card>
+        )}
+          {bookings.map((booking) => (
+            <div className="min-w-[90%] max-w-full">
+              <BookingItem booking={booking} />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="mt-6">

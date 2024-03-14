@@ -9,17 +9,19 @@ import { Button } from "./ui/button";
 import {
   Sheet,
   SheetContent,
-
   SheetTrigger,
 } from "./ui/sheet";
 import SideMenu from "./side-menu";
+import Link from "next/link";
 
 const Header = () => {
  
   return (
-    <Card>
+    <Card className="rounded-none">
       <CardContent className="p-5 justify-between flex items-center flex-row">
-        <Image src={"/logo.png"} alt={"FSW Barber"} width={120} height={22} />
+        <Link href={"/"}>
+          <Image src={"/logo.png"} alt={"FSW Barber"} width={120} height={22} />
+        </Link>
 
         <Sheet>
           <SheetTrigger asChild>
