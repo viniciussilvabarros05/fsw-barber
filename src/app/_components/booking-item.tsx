@@ -8,6 +8,17 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { cancelBookking } from "../_actions/cancel-booking";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -43,17 +54,17 @@ const BookingItem = ({ booking }: BookingItemProps) => {
 
       toast.success("Reserva cancelada com sucesso!");
     } catch (error) {
-        console.error(error);
+      console.error(error);
     } finally {
-        setIsDeleteLoading(true);
-        setIsBookingOpen(false)
+      setIsDeleteLoading(true);
+      setIsBookingOpen(false);
     }
   };
 
   return (
     <Sheet open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-      <SheetTrigger>
-        <Card className="min-w-full">
+      <SheetTrigger asChild>
+        <Card className="">
           <CardContent className="p-5 py-0 flex flex-row justify-between flex-[0.8]">
             <div className="py-5 flex flex-col gap-3">
               <Badge
@@ -82,7 +93,7 @@ const BookingItem = ({ booking }: BookingItemProps) => {
         </Card>
       </SheetTrigger>
 
-      <SheetContent className="px-0" >
+      <SheetContent className="px-0">
         <SheetHeader className="text-left pb-6 border-b border-solid border-secondary px-5">
           <SheetTitle>Informações da Reserva</SheetTitle>
         </SheetHeader>
@@ -153,25 +164,52 @@ const BookingItem = ({ booking }: BookingItemProps) => {
         </div>
         <SheetFooter className="flex-row gap-3 mt-3 px-5">
           <SheetClose asChild>
-            <Button
-              className="w-full"
-              variant="secondary"
-            >
+            <Button className="w-full" variant="secondary">
               Voltar
             </Button>
           </SheetClose>
 
-          <Button
-            onClick={handleCancelClick}
-            disabled={!isBookingConfirmed || isDeleteLoading}
-            className="w-full"
-            variant="destructive"
-          >
-            {isDeleteLoading && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Cancelar Reserva
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                disabled={!isBookingConfirmed || isDeleteLoading}
+                className="w-full"
+                variant="destructive"
+              >
+                {isDeleteLoading && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Cancelar Reserva
+              </Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent className="w-[90%]">
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Deseja mesmo cancelar sua reserva?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Uma vez cancelada, não será possível reverter essa ação
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter className="flex-row gap-3">
+                <AlertDialogCancel className="w-full mt-0">
+                  Voltar
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  disabled={isDeleteLoading}
+                  className="w-full"
+                  onClick={handleCancelClick}
+                >
+                  {isDeleteLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Confirmar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </SheetFooter>
       </SheetContent>
     </Sheet>

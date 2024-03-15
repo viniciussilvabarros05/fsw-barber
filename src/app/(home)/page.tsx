@@ -49,7 +49,7 @@ export default async function Home() {
          
         </h2>
 
-        <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden pr-4">
+        <div className="flex overflow-x-auto [&::-webkit-scrollbar]:hidden pr-4">
         {session?.user &&  bookings.length == 0 && (
           <Card className="py-4 w-full mx-4">
             <h2 className="text-gray-400 text-center">
@@ -58,7 +58,7 @@ export default async function Home() {
           </Card>
         )}
           {bookings.map((booking) => (
-            <div className="min-w-[90%] max-w-full">
+            <div className="min-w-[90%] max-w-full ml-5">
               <BookingItem booking={booking} />
             </div>
           ))}
