@@ -63,7 +63,7 @@ export default async function Home() {
           </Card>
         )}
           {bookings.map((booking) => (
-            <div className="min-w-[90%] max-w-full ml-5">
+            <div className="min-w-[90%] max-w-full ml-5" key={booking.id}>
               <BookingItem key={booking.id} booking={booking} />
             </div>
           ))}
