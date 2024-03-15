@@ -1,14 +1,14 @@
-import { withAuth } from "next-auth/middleware";
+// import { withAuth } from "next-auth/middleware";
 
-export default withAuth(
-  {
-    callbacks: {
-      authorized: ({ token,req }) => {
-        const session:string|undefined = req.cookies.get("next-auth.session-token")?.value;
-        return session? true: false;
-      },
-    },
-  }
-);
+// export default withAuth(
+//   {
+//     callbacks: {
+//       authorized: ({ token,req }) => {
+//         const session:string|undefined = req.cookies.get(process.env.NEXTAUTH_COOKIE as string)?.value;
+//         return session? true: false;
+//       },
+//     },
+//   }
+// );
 
-export const config = { matcher: ["/bookings"] };
+// export const config = { matcher: ["/bookings"] };
