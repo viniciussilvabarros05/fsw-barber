@@ -6,7 +6,7 @@ import BookingItem from "../_components/booking-item";
 import { db } from "../_lib/prisma";
 import BarbershopItem from "./_component/barbershop-item";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/_lib/auth";
 import { Card } from "../_components/ui/card";
 
 export default async function Home() {
@@ -64,7 +64,7 @@ export default async function Home() {
         )}
           {bookings.map((booking) => (
             <div className="min-w-[90%] max-w-full ml-5">
-              <BookingItem booking={booking} />
+              <BookingItem key={booking.id} booking={booking} />
             </div>
           ))}
         </div>

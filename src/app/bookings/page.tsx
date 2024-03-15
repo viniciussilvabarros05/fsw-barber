@@ -1,6 +1,6 @@
 import { isFuture, isPast } from "date-fns";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/_lib/auth";
 import BookingItem from "../_components/booking-item";
 import Header from "../_components/header";
 import { Card } from "../_components/ui/card";

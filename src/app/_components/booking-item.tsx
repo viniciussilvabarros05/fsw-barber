@@ -3,9 +3,9 @@ import { Prisma } from "@prisma/client";
 import { format, isFuture } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Loader2 } from "lucide-react";
-import { revalidatePath } from "next/cache";
+
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { cancelBookking } from "../_actions/cancel-booking";
 import {
