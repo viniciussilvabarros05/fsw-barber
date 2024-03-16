@@ -8,9 +8,8 @@ import BarbershopItem from "./_component/barbershop-item";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/_lib/auth";
 import { Card } from "../_components/ui/card";
-import { NextRequest } from "next/server";
 
-export default async function Home(req:NextRequest) {
+export default async function Home() {
   const session = await getServerSession(authOptions);
   const barbershops = await db.barbershop.findMany({});
 
