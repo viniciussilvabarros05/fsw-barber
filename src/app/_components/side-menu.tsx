@@ -10,10 +10,12 @@ import { SheetHeader, SheetTitle } from "./ui/sheet";
 
 const SideMenu = () => {
     const { data, status } = useSession();
+    
     const handleLoginClick = async () => {
       await signIn("google");
     };
     const handleLogoutClick = () => {
+      localStorage.removeItem("session")
       return signOut();
     };
   return (

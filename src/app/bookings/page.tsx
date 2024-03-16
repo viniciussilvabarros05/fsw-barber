@@ -5,9 +5,16 @@ import BookingItem from "../_components/booking-item";
 import Header from "../_components/header";
 import { Card } from "../_components/ui/card";
 import { db } from "../_lib/prisma";
+import { redirect } from "next/navigation";
+
+
+
 
 const BookingsPage = async () => {
   const session = await getServerSession(authOptions);
+  if(!session?.user){
+    return redirect("/")
+  }
 
   const bookings = await db.booking.findMany({
     where: {
